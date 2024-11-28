@@ -1,0 +1,19 @@
+{
+    "name": "v1p3r75/clean-achitecture-php",
+    "description": "PHP clean acthitecture (example : blog)",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Domain\\": "domain/",
+            "Infra\\": "infra/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Fortunatus KIDJE",
+            "email": "elfriedv16@gmail.com"
+        }
+    ],
+    "require": {}
+}
