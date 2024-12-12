@@ -1,6 +1,6 @@
 <?php
 
-namespace Domain\Entities;
+namespace Domain\User\Entity;
 
 use DateTimeImmutable;
 

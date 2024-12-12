@@ -1,6 +1,6 @@
 {
     "name": "v1p3r75/clean-achitecture-php",
-    "description": "PHP clean acthitecture (example : blog)",
+    "description": "PHP clean architecture example for blog",
     "type": "project",
     "license": "MIT",
     "autoload": {
