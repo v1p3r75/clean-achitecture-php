@@ -9,23 +9,32 @@ class CreateUserUseCase
 {
 
     public function __construct(
-        private CreateUserRequest $request,
-        private CreateUserPresenterInterface $presenter,
         private UserRepositoryInterface $userRepositoryInterface
-    ){}
+    ) {}
 
-    public function execute() 
-    {
+    public function execute(
+        CreateUserRequest $request,
+        CreateUserPresenterInterface $presenter,
+    ): CreateUserPresenterInterface {
+
         $user = new User();
-        $user->setUsername($this->request->username);
-        $user->setEmail($this->request->email);
-        $user->setPassword($this->request->password);
+        $user->setUsername($request->username);
+        $user->setEmail($request->email);
+        $user->setPassword($request->password);
 
         $this->userRepositoryInterface->save($user);
 
-        $response = new CreateUserResponse($user);
-        
-        return $this->presenter->present($response);
+        $response = new CreateUserResponse();
+        $response->setHttpCode(201);
+        $response->setUser($user);
+
+        return $presenter->present($response);
     }
 
+    private function validate(CreateUserRequest $request): true | array
+    {
+        //TODO: validate
+
+        return true;
+    }
 }

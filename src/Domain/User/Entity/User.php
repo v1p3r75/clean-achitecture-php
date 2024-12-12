@@ -3,9 +3,12 @@
 namespace Domain\User\Entity;
 
 use DateTimeImmutable;
+use Ramsey\Uuid\Uuid;
 
 class User
 {
+    private Uuid $id;
+
     private string $username;
 
     private string $password;
@@ -15,10 +18,17 @@ class User
     private bool $isAdmin;
 
     private DateTimeImmutable $createdAt;
+    
 
-    private DateTimeImmutable $updatedAt;
+    public function __construct() {
+        $this->id = Uuid::uuid7();
+    }
 
-    public function __construct() {}
+
+    public function getId(): string
+    {
+        return $this->id;
+    }
 
     public function getUsername(): string
     {
@@ -73,14 +83,4 @@ class User
         return $this;
     }
 
-    public function getUpdatedAt(): DateTimeImmutable
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(DateTimeImmutable $updatedAt): self
-    {
-        $this->updatedAt = $updatedAt;
-        return $this;
-    }
 }
