@@ -7,7 +7,7 @@ use Ramsey\Uuid\Uuid;
 
 class User
 {
-    private Uuid $id;
+    private string $id;
 
     private string $username;
 

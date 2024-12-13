@@ -6,8 +6,7 @@
     "autoload": {
         "psr-4": {
             "Domain\\": "src/Domain/",
-            "Infrastructure\\": "src/Infrastructure/",
-            "Tests\\": "tests/"
+            "Infrastructure\\": "src/Infrastructure/"
         }
     },
     "autoload-dev": {

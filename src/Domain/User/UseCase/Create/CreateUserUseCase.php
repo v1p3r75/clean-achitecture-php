@@ -15,7 +15,7 @@ class CreateUserUseCase
     public function execute(
         CreateUserRequest $request,
         CreateUserPresenterInterface $presenter,
-    ): CreateUserPresenterInterface {
+    ) {
 
         $user = new User();
         $user->setUsername($request->username);

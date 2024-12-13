@@ -5,7 +5,7 @@ namespace Tests\Unit\Domain\User\Adapters;
 use Domain\User\Contract\UserRepositoryInterface;
 use Domain\User\Entity\User;
 
-class InMemoryUserRepositoryAdapter implements UserRepositoryInterface
+class InMemoryUserRepository implements UserRepositoryInterface
 {
     /** @var User[] */
     private array $users = [];
