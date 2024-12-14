@@ -1,9 +1,9 @@
 <?php
 
-namespace Domain\User\Entity;
+namespace Domain\Entity;
 
 use DateTimeImmutable;
-use Ramsey\Uuid\Uuid;
+use Domain\Service\Uuid;
 
 class User
 {
@@ -15,13 +15,13 @@ class User
 
     private string $email;
 
-    private bool $isAdmin;
+    private bool $isAdmin = false;
 
     private DateTimeImmutable $createdAt;
     
 
     public function __construct() {
-        $this->id = Uuid::uuid7();
+        $this->id = Uuid::get();
     }
 
 

@@ -1,8 +1,6 @@
 <?php
 
-namespace Domain\User\UseCase\Create;
-
-use DateTimeImmutable;
+namespace Application\Request\User;
 
 class CreateUserRequest
 {
@@ -11,4 +9,5 @@ class CreateUserRequest
         public string $password,
         public string $email
     ){}
+
 }

@@ -6,7 +6,9 @@
     "autoload": {
         "psr-4": {
             "Domain\\": "src/Domain/",
-            "Infrastructure\\": "src/Infrastructure/"
+            "Application\\": "src/Application/",
+            "Infrastructure\\": "src/Infrastructure/",
+            "Presentation\\": "src/Presentation/"
         }
     },
     "autoload-dev": {
@@ -29,6 +31,7 @@
         }
     },
     "require": {
-        "ramsey/uuid": "^4.7"
+        "ramsey/uuid": "^4.7",
+        "beberlei/assert": "^3.3"
     }
 }
