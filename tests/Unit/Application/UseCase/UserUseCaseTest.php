@@ -1,11 +1,14 @@
 <?php
 
 use Application\Contract\PasswordHasherInterface;
+use Application\Request\User\GetAllUserRequest;
 use Application\Request\User\GetUserRequest;
 use Application\UseCase\User\CreateUserUseCase;
 use Application\Request\User\CreateUserRequest;
+use Application\UseCase\User\GetAllUserUseCase;
 use Application\UseCase\User\GetUserUseCase;
 use Domain\Entity\User;
+use Presentation\User\GetAllUserJsonPresenter;
 use Presentation\User\ShowUserJsonPresenter;
 use Tests\Unit\Mock\Repository\InMemoryUserRepository;
 
@@ -79,7 +82,6 @@ it ('should get user from repository', function () {
     $useCase = new GetUserUseCase($this->repository);
 
     $request = new GetUserRequest($fakeUser->getId());
-    $request2 = new GetUserRequest('unknown-user');
 
     $useCase->execute($request, $this->presenter);
 
@@ -106,4 +108,28 @@ it ('should return errors if user not found', function () {
     expect($viewModel->httpCode)->toBe(404);
     expect($viewModel->errors)->toBeEmpty();
 
+});
+
+it ('should return all users', closure: function () {
+
+    $fakeUser1 = new User();
+    $fakeUser1->setEmail('user1@gmail.com');
+    $fakeUser2 = new User();
+    $fakeUser2->setEmail('user2@gmail.com');
+
+    $this->repository->save($fakeUser1);
+    $this->repository->save($fakeUser2);
+
+    $useCase = new GetAllUserUseCase($this->repository);
+    $request = new GetAllUserRequest();
+    $presenter = new GetAllUserJsonPresenter();
+
+    $useCase->execute($request, $presenter);
+
+    $viewModel = $presenter->getViewModel();
+
+    expect($viewModel->status)->toBeTrue();
+    expect($viewModel->httpCode)->toBe(200);
+    expect($viewModel->errors)->toBeEmpty();
+    expect($viewModel->data)->toHaveCount(2);
 });

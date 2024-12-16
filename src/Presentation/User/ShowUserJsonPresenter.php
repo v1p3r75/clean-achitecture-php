@@ -9,7 +9,7 @@ use Presentation\User\ViewModel\ShowUserViewModel;
 class ShowUserJsonPresenter implements ShowUserPresenter
 {
 
-    private ShowUserViewModel $viewModel;
+    private ?ShowUserViewModel $viewModel = null;
 
     public function present(UserResponse $response): void
     {
@@ -30,9 +30,9 @@ class ShowUserJsonPresenter implements ShowUserPresenter
     }
 
     /**
-     * @return ShowUserViewModel
+     * @return ShowUserViewModel|null
      */
-    public function getViewModel(): ShowUserViewModel
+    public function getViewModel(): ?ShowUserViewModel
     {
         return $this->viewModel;
     }
