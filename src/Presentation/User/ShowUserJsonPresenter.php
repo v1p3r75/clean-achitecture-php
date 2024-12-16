@@ -24,7 +24,7 @@ class ShowUserJsonPresenter implements ShowUserPresenter
                 'email' => $response->getUser()->getEmail(),
                 'username' => $response->getUser()->getUsername(),
                 'isAdmin' => $response->getUser()->getIsAdmin(),
-                'createdAt' => $response->getUser()->getCreatedAt()->format("Y-m-d"),
+                'createdAt' => $response->getUser()->getCreatedAt()?->format("Y-m-d"),
             ];
         }
     }

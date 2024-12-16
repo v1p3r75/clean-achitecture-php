@@ -24,16 +24,16 @@ readonly class GetUserUseCase
 
         $response = new UserResponse();
 
-        if ($user !== null) {
-
-            $response->setHttpCode(HttpCode::HTTP_OK);
-            $response->setUser($user);
-        } else {
+        if (!$user) {
 
             $response->setStatus(false);
             $response->setHttpCode(HttpCode::HTTP_NOT_FOUND);
-            $response->addError('user', 'User not found');
+            $presenter->present($response);
+            return;
         }
+
+        $response->setHttpCode(HttpCode::HTTP_OK);
+        $response->setUser($user);
 
         $presenter->present($response);
 

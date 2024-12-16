@@ -17,7 +17,7 @@ class User
 
     private bool $isAdmin = false;
 
-    private DateTimeImmutable $createdAt;
+    private ?DateTimeImmutable $createdAt = null;
 
     public function __construct() {
 
@@ -72,12 +72,12 @@ class User
         return $this;
     }
 
-    public function getCreatedAt(): DateTimeImmutable
+    public function getCreatedAt(): ?DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(DateTimeImmutable $createdAt): self
+    public function setCreatedAt(?DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
         return $this;
