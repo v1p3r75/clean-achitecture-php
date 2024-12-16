@@ -3,11 +3,11 @@
 namespace Domain\Entity;
 
 use DateTimeImmutable;
-use Domain\Service\Uuid;
+use Domain\ValueObject\Id;
 
 class User
 {
-    private string $id;
+    private Id $id;
 
     private string $username;
 
@@ -18,16 +18,16 @@ class User
     private bool $isAdmin = false;
 
     private DateTimeImmutable $createdAt;
-    
 
     public function __construct() {
-        $this->id = Uuid::get();
+
+        $this->id = new Id();
     }
 
 
     public function getId(): string
     {
-        return $this->id;
+        return $this->id->getValue();
     }
 
     public function getUsername(): string

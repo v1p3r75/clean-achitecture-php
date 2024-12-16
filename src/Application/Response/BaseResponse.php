@@ -38,7 +38,7 @@ abstract class BaseResponse
         return $this->errors;
     }
 
-    public function addError(string $field, string $message): void
+    public function addError(string $field, string|array $message): void
     {
         $this->errors[$field] = $message;
     }

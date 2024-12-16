@@ -6,10 +6,10 @@ abstract class BaseViewModel
 {
     public bool $status;
 
-    public int $httpCode;
+    public int $httpCode = 200;
 
-    public string $message;
+    public string $message = '';
 
-    public array $errors;
+    public array $errors = [];
 
 }

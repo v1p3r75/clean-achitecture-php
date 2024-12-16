@@ -7,20 +7,20 @@ use Domain\Entity\User;
 class UserResponse extends BaseResponse
 {
 
-    private User $user;
+    private ?User $user = null;
 
     /**
-     * @return User
+     * @return User|null
      */
-    public function getUser(): User
+    public function getUser(): ?User
     {
         return $this->user;
     }
 
     /**
-     * @param User $user
+     * @param User|null $user
      */
-    public function setUser(User $user): void
+    public function setUser(?User $user): void
     {
         $this->user = $user;
     }
