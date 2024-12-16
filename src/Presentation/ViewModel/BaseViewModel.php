@@ -2,7 +2,7 @@
 
 namespace Presentation\ViewModel;
 
-abstract class BaseViewModel
+class BaseViewModel
 {
     public bool $status;
 
@@ -12,4 +12,5 @@ abstract class BaseViewModel
 
     public array $errors = [];
 
+    public array $data = [];
 }

@@ -2,11 +2,11 @@
 
 namespace Presentation\User;
 
-use Application\Presenter\GetAllUserPresenter;
+use Application\Presenter\GetAllUserPresenterInterface;
 use Application\Response\GetAllUserResponse;
 use Presentation\User\ViewModel\GetAllUserViewModel;
 
-class GetAllUserJsonPresenter implements GetAllUserPresenter
+class GetAllUserJsonPresenter implements GetAllUserPresenterInterface
 {
 
     private ?GetAllUserViewModel $viewModel = null;

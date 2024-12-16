@@ -1,13 +1,16 @@
 <?php
 
 use Application\Contract\PasswordHasherInterface;
+use Application\Request\User\CreateUserRequest;
+use Application\Request\User\DeleteUserRequest;
 use Application\Request\User\GetAllUserRequest;
 use Application\Request\User\GetUserRequest;
 use Application\UseCase\User\CreateUserUseCase;
-use Application\Request\User\CreateUserRequest;
+use Application\UseCase\User\DeleteUserUseCase;
 use Application\UseCase\User\GetAllUserUseCase;
 use Application\UseCase\User\GetUserUseCase;
 use Domain\Entity\User;
+use Presentation\User\DeleteUserJsonPresenter;
 use Presentation\User\GetAllUserJsonPresenter;
 use Presentation\User\ShowUserJsonPresenter;
 use Tests\Unit\Mock\Repository\InMemoryUserRepository;
@@ -47,7 +50,7 @@ it('should create a new user', function () {
 
 });
 
-it('should return validation errors for user creation', function () {
+it('should return validation errors for user creation (invalid request)', function () {
 
     $useCase = new CreateUserUseCase($this->repository, $this->hasher);
 
@@ -132,4 +135,27 @@ it ('should return all users', closure: function () {
     expect($viewModel->httpCode)->toBe(200);
     expect($viewModel->errors)->toBeEmpty();
     expect($viewModel->data)->toHaveCount(2);
+});
+
+
+it ('should delete a user', closure: function () {
+
+    $fakeUser = new User();
+    $fakeUser->setEmail('user1@gmail.com');
+
+    $this->repository->save($fakeUser);
+
+    $useCase = new DeleteUserUseCase($this->repository);
+    $request = new DeleteUserRequest($fakeUser->getId());
+    $presenter = new DeleteUserJsonPresenter();
+
+    $useCase->execute($request, $presenter);
+
+    expect($this->repository->find($request->id))->toBeNull();
+
+    $viewModel = $presenter->getViewModel();
+
+    expect($viewModel->status)->toBeTrue();
+    expect($viewModel->httpCode)->toBe(204);
+
 });

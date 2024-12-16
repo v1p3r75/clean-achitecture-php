@@ -2,13 +2,16 @@
 
 namespace Application\UseCase\User;
 
+use Application\Presenter\DeleteUserPresenterInterface;
 use Application\Presenter\ShowUserPresenterInterface;
+use Application\Request\User\DeleteUserRequest;
 use Application\Request\User\GetUserRequest;
+use Application\Response\BaseResponse;
 use Application\Response\UserResponse;
 use Application\Service\HttpCode;
 use Domain\Repository\UserRepositoryInterface;
 
-readonly class GetUserUseCase
+readonly class DeleteUserUseCase
 {
 
     public function __construct(
@@ -16,25 +19,27 @@ readonly class GetUserUseCase
     ){}
 
     public function execute(
-        GetUserRequest $request,
-        ShowUserPresenterInterface $presenter
+        DeleteUserRequest $request,
+        DeleteUserPresenterInterface $presenter
     ): void {
 
         $user = $this->userRepository->find($request->id);
 
-        $response = new UserResponse();
+        $response = new BaseResponse();
 
         if (!$user) {
 
             $response->setStatus(false);
+            $response->setMessage('user not found');
             $response->setHttpCode(HttpCode::HTTP_NOT_FOUND);
             $presenter->present($response);
             return;
         }
 
-        $response->setHttpCode(HttpCode::HTTP_OK);
-        $response->setUser($user);
+        $this->userRepository->delete($request->id);
 
+        $response->setHttpCode(HttpCode::HTTP_NO_CONTENT);
+        $response->setMessage('user deleted');
         $presenter->present($response);
 
     }

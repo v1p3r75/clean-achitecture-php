@@ -2,7 +2,7 @@
 
 namespace Application\Response;
 
-abstract class BaseResponse
+class BaseResponse
 {
 
     protected bool $status = true;

@@ -4,7 +4,7 @@ namespace Application\Presenter;
 
 use Application\Response\GetAllUserResponse;
 
-interface GetAllUserPresenter
+interface GetAllUserPresenterInterface
 {
     public function present(GetAllUserResponse $response): void;
 

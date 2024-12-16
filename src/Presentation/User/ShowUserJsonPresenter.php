@@ -2,11 +2,11 @@
 
 namespace Presentation\User;
 
-use Application\Presenter\ShowUserPresenter;
+use Application\Presenter\ShowUserPresenterInterface;
 use Application\Response\UserResponse;
 use Presentation\User\ViewModel\ShowUserViewModel;
 
-class ShowUserJsonPresenter implements ShowUserPresenter
+class ShowUserJsonPresenter implements ShowUserPresenterInterface
 {
 
     private ?ShowUserViewModel $viewModel = null;

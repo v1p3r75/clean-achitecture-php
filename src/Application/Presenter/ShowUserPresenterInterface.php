@@ -4,7 +4,7 @@ namespace Application\Presenter;
 
 use Application\Response\UserResponse;
 
-interface ShowUserPresenter
+interface ShowUserPresenterInterface
 {
     public function present(UserResponse $response): void;
 

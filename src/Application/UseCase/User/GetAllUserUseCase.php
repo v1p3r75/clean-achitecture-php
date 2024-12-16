@@ -2,7 +2,7 @@
 
 namespace Application\UseCase\User;
 
-use Application\Presenter\GetAllUserPresenter;
+use Application\Presenter\GetAllUserPresenterInterface;
 use Application\Request\User\GetAllUserRequest;
 use Application\Response\GetAllUserResponse;
 use Application\Service\HttpCode;
@@ -16,7 +16,7 @@ readonly class GetAllUserUseCase
 
     public function execute(
         GetAllUserRequest $request,
-        GetAllUserPresenter $presenter
+        GetAllUserPresenterInterface $presenter
     ): void {
 
         $users = $this->userRepository->findAll();

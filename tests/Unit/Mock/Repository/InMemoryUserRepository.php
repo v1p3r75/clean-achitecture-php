@@ -34,4 +34,12 @@ class InMemoryUserRepository implements UserRepositoryInterface
         }
         return null;
     }
+
+    public function delete(string $id): void
+    {
+
+        if (isset($this->users[$id])) {
+            $this->users = array_filter($this->users, fn(User $user) => $user->getId() !== $id);
+        }
+    }
 }

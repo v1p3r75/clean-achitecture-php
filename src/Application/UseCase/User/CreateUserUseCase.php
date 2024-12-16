@@ -3,7 +3,7 @@
 namespace Application\UseCase\User;
 
 use Application\Contract\PasswordHasherInterface;
-use Application\Presenter\ShowUserPresenter;
+use Application\Presenter\ShowUserPresenterInterface;
 use Application\Request\User\CreateUserRequest;
 use Application\Response\UserResponse;
 use Application\Service\HttpCode;
@@ -21,8 +21,8 @@ readonly class CreateUserUseCase
     ) {}
 
     public function execute(
-        CreateUserRequest $request,
-        ShowUserPresenter $presenter,
+        CreateUserRequest          $request,
+        ShowUserPresenterInterface $presenter,
     ): void
     {
 
