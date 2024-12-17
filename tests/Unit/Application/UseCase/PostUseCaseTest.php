@@ -1,21 +1,12 @@
 <?php
 
-use Application\Contract\PasswordHasherInterface;
 use Application\Request\Post\CreatePostRequest;
-use Application\Request\User\CreateUserRequest;
-use Application\Request\User\DeleteUserRequest;
-use Application\Request\User\GetAllUserRequest;
-use Application\Request\User\GetUserRequest;
+use Application\Request\Post\GetPostRequest;
 use Application\UseCase\Post\CreatePostUseCase;
-use Application\UseCase\User\CreateUserUseCase;
-use Application\UseCase\User\DeleteUserUseCase;
-use Application\UseCase\User\GetAllUserUseCase;
-use Application\UseCase\User\GetUserUseCase;
+use Application\UseCase\Post\GetPostUseCase;
+use Domain\Entity\Post;
 use Domain\Entity\User;
 use Presentation\Post\ShowPostJsonPresenter;
-use Presentation\User\DeleteUserJsonPresenter;
-use Presentation\User\GetAllUserJsonPresenter;
-use Presentation\User\ShowUserJsonPresenter;
 use Tests\Unit\Mock\Repository\InMemoryPostRepository;
 use Tests\Unit\Mock\Repository\InMemoryUserRepository;
 
@@ -71,9 +62,6 @@ it('should return validation errors for invalid request (creation)', function ()
 
     $useCase->execute($request, $this->presenter);
 
-    $post = $this->postRepository->find($request->userId);
-    expect($post)->toBeNull();
-
     $viewModel = $this->presenter->getViewModel();
 
     expect($viewModel->status)->toBeFalse();
@@ -83,19 +71,47 @@ it('should return validation errors for invalid request (creation)', function ()
 
 });
 
-/**
-it ('should get user from repository', function () {
+it('should return errors if user not found', function () {
+
+    $useCase = new CreatePostUseCase($this->postRepository, $this->userRepository);
+
+    $request = new CreatePostRequest(
+        'title',
+        'Title content. Long text.',
+        'invalid_user'
+    );
+
+    $useCase->execute($request, $this->presenter);
+
+    $post = $this->postRepository->find($request->userId);
+    expect($post)->toBeNull();
+
+    $viewModel = $this->presenter->getViewModel();
+
+    expect($viewModel->status)->toBeFalse();
+    expect($viewModel->httpCode)->toBe(404);
+    expect($viewModel->errors)->not()->toBeEmpty();
+    expect($viewModel->data)->toBeEmpty();
+
+});
+
+it ('should get a post from repository', function () {
 
     $fakeUser = new User();
     $fakeUser->setEmail('fake@gmail.com');
     $fakeUser->setUsername('viper');
     $fakeUser->setPassword('password');
 
-    $this->repository->save($fakeUser);
+    $post = new Post();
+    $post->setTitle('title');
+    $post->setContent('content');
+    $post->setUser($fakeUser);
 
-    $useCase = new GetUserUseCase($this->repository);
+    $this->postRepository->save($post);
 
-    $request = new GetUserRequest($fakeUser->getId());
+    $useCase = new GetPostUseCase($this->postRepository);
+
+    $request = new GetPostRequest($post->getId());
 
     $useCase->execute($request, $this->presenter);
 
@@ -104,15 +120,17 @@ it ('should get user from repository', function () {
     expect($viewModel->status)->tobeTrue();
     expect($viewModel->httpCode)->toBe(200);
     expect($viewModel->errors)->toBeEmpty();
-    expect($viewModel->data['email'])->toBe('fake@gmail.com');
-    expect($viewModel->data['username'])->toBe('viper');
+    expect($viewModel->data['title'])->toBe('title');
+    expect($viewModel->data['content'])->toBe('content');
+    expect($viewModel->data['user']['username'])->toBe('viper');
 });
 
-it ('should return errors if user not found', function () {
 
-    $useCase = new GetUserUseCase($this->repository);
+it ('should return errors if post not found', function () {
 
-    $request = new GetUserRequest('unknown-user');
+    $useCase = new GetPostUseCase($this->postRepository);
+
+    $request = new GetPostRequest('unknown-post');
 
     $useCase->execute($request, $this->presenter);
 
@@ -124,6 +142,7 @@ it ('should return errors if user not found', function () {
 
 });
 
+/**
 it ('should return all users', closure: function () {
 
     $fakeUser1 = new User();

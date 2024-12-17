@@ -13,4 +13,5 @@ interface PostRepositoryInterface
     public function findAll(): array;
 
     public function delete(string $id): void;
+
 }
