@@ -1,69 +1,78 @@
 <?php
 
 use Application\Contract\PasswordHasherInterface;
+use Application\Request\Post\CreatePostRequest;
 use Application\Request\User\CreateUserRequest;
 use Application\Request\User\DeleteUserRequest;
 use Application\Request\User\GetAllUserRequest;
 use Application\Request\User\GetUserRequest;
+use Application\UseCase\Post\CreatePostUseCase;
 use Application\UseCase\User\CreateUserUseCase;
 use Application\UseCase\User\DeleteUserUseCase;
 use Application\UseCase\User\GetAllUserUseCase;
 use Application\UseCase\User\GetUserUseCase;
 use Domain\Entity\User;
+use Presentation\Post\ShowPostJsonPresenter;
 use Presentation\User\DeleteUserJsonPresenter;
 use Presentation\User\GetAllUserJsonPresenter;
 use Presentation\User\ShowUserJsonPresenter;
+use Tests\Unit\Mock\Repository\InMemoryPostRepository;
 use Tests\Unit\Mock\Repository\InMemoryUserRepository;
 
 beforeEach(function () {
 
-    $this->repository = new InMemoryUserRepository();
-    $this->presenter = new ShowUserJsonPresenter();
-    $this->hasher = Mockery::mock(PasswordHasherInterface::class);
-    $this->hasher->shouldReceive("hash")->andReturn('password');
+    $this->userRepository = new InMemoryUserRepository();
+    $this->postRepository = new InMemoryPostRepository();
+    $this->presenter = new ShowPostJsonPresenter();
 
 });
 
-it('should create a new user', function () {
+it('should post an article', function () {
 
-    $useCase = new CreateUserUseCase($this->repository, $this->hasher);
+    $fakeUser = new User();
+    $fakeUser->setUsername('viper');
+    $fakeUser->setEmail('viper@gmail.com');
+    $this->userRepository->save($fakeUser);
 
-    $request = new CreateUserRequest(
-        'viper75',
-        'Passme123#',
-        'viper75@gmail.com'
+    $useCase = new CreatePostUseCase($this->postRepository, $this->userRepository);
+
+    $request = new CreatePostRequest(
+        'Clean Architecture',
+        'How to develop a clean architecture project ?',
+        $fakeUser->getId()
     );
 
     $useCase->execute($request, $this->presenter);
-
-    $savedUser = $this->repository->findOneByEmail($request->email);
-    expect($savedUser)->not()->toBeNull();
-    expect($savedUser->getUsername())->toBe($request->username);
 
     $viewModel = $this->presenter->getViewModel();
 
+    $post = $this->postRepository->find($viewModel->data['id']);
+    expect($post)->not()->toBeNull();
+    expect($post->getTitle())->toBe($request->title);
+
     expect($viewModel->status)->toBeTrue();
     expect($viewModel->httpCode)->toBe(201);
-    expect($viewModel->data['email'])->toBe($request->email);
-    expect($viewModel->data['username'])->toBe($request->username);
-    expect($viewModel->data['isAdmin'])->toBeFalse();
+    expect($viewModel->data['title'])->toBe($request->title);
+    expect($viewModel->data['content'])->toBe($request->content);
+    expect($viewModel->data['user']['id'])->toBe($request->userId);
 
 });
 
+
 it('should return validation errors for invalid request (creation)', function () {
 
-    $useCase = new CreateUserUseCase($this->repository, $this->hasher);
+    $useCase = new CreatePostUseCase($this->postRepository, $this->userRepository);
 
-    $request = new CreateUserRequest(
-        'min',
-        'passme',
-        'invalid_address'
+    $request = new CreatePostRequest(
+        'title',
+        'content',
+        'user'
     );
 
     $useCase->execute($request, $this->presenter);
 
-    $savedUser = $this->repository->findOneByEmail($request->email);
-    expect($savedUser)->toBeNull();
+    $post = $this->postRepository->find($request->userId);
+    expect($post)->toBeNull();
 
     $viewModel = $this->presenter->getViewModel();
 
@@ -71,8 +80,10 @@ it('should return validation errors for invalid request (creation)', function ()
     expect($viewModel->httpCode)->toBe(400);
     expect($viewModel->errors)->not()->toBeEmpty();
     expect($viewModel->data)->toBeEmpty();
+
 });
 
+/**
 it ('should get user from repository', function () {
 
     $fakeUser = new User();
@@ -137,7 +148,6 @@ it ('should return all users', closure: function () {
     expect($viewModel->data)->toHaveCount(2);
 });
 
-
 it ('should delete a user', closure: function () {
 
     $fakeUser = new User();
@@ -159,3 +169,4 @@ it ('should delete a user', closure: function () {
     expect($viewModel->httpCode)->toBe(204);
 
 });
+ **/

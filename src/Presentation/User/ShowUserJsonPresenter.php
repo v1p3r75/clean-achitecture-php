@@ -18,13 +18,13 @@ class ShowUserJsonPresenter implements ShowUserPresenterInterface
         $this->viewModel->httpCode = $response->getHttpCode();
         $this->viewModel->message = $response->getMessage();
         $this->viewModel->errors = $response->getErrors();
-        if ($response->getUser()) {
+        if ($user = $response->getUser()) {
             $this->viewModel->data = [
-                'id' => $response->getUser()->getId(),
-                'email' => $response->getUser()->getEmail(),
-                'username' => $response->getUser()->getUsername(),
-                'isAdmin' => $response->getUser()->getIsAdmin(),
-                'createdAt' => $response->getUser()->getCreatedAt()?->format("Y-m-d"),
+                'id' => $user->getId(),
+                'email' => $user->getEmail(),
+                'username' => $user->getUsername(),
+                'isAdmin' => $user->getIsAdmin(),
+                'createdAt' => $user->getCreatedAt()?->format("Y-m-d"),
             ];
         }
     }
