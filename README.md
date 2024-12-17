@@ -61,7 +61,7 @@ src/
 
 This project follows Clean Architecture to ensure:
 
-Separation of Concerns: Each layer has a distinct responsibility.
-Testability: Core logic is decoupled and easy to test.
-Maintainability: Adding new features or modifying existing ones is straightforward.
-Scalability: The architecture allows the application to grow without breaking.
+- Separation of Concerns: Each layer has a distinct responsibility.
+- Testability: Core logic is decoupled and easy to test.
+- Maintainability: Adding new features or modifying existing ones is straightforward.
+- Scalability: The architecture allows the application to grow without breaking.
