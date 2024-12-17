@@ -1,13 +1,16 @@
 <?php
 
 use Application\Request\Post\CreatePostRequest;
+use Application\Request\Post\DeletePostRequest;
 use Application\Request\Post\GetAllPostRequest;
 use Application\Request\Post\GetPostRequest;
 use Application\UseCase\Post\CreatePostUseCase;
+use Application\UseCase\Post\DeletePostUseCase;
 use Application\UseCase\Post\GetAllPostUseCase;
 use Application\UseCase\Post\GetPostUseCase;
 use Domain\Entity\Post;
 use Domain\Entity\User;
+use Presentation\Post\DeletePostJsonPresenter;
 use Presentation\Post\GetAllPostJsonPresenter;
 use Presentation\Post\ShowPostJsonPresenter;
 use Tests\Unit\Mock\Repository\InMemoryPostRepository;
@@ -170,21 +173,21 @@ it ('should return all posts', closure: function () {
     expect($viewModel->data)->toHaveCount(2);
 });
 
-/**
-it ('should delete a user', closure: function () {
 
-    $fakeUser = new User();
-    $fakeUser->setEmail('user1@gmail.com');
+it ('should delete a post', closure: function () {
 
-    $this->repository->save($fakeUser);
+    $post = new Post();
+    $post->setTitle('title');
 
-    $useCase = new DeleteUserUseCase($this->repository);
-    $request = new DeleteUserRequest($fakeUser->getId());
-    $presenter = new DeleteUserJsonPresenter();
+    $this->postRepository->save($post);
+
+    $useCase = new DeletePostUseCase($this->postRepository);
+    $request = new DeletePostRequest($post->getId());
+    $presenter = new DeletePostJsonPresenter();
 
     $useCase->execute($request, $presenter);
 
-    expect($this->repository->find($request->id))->toBeNull();
+    expect($this->postRepository->find($request->id))->toBeNull();
 
     $viewModel = $presenter->getViewModel();
 
@@ -192,4 +195,3 @@ it ('should delete a user', closure: function () {
     expect($viewModel->httpCode)->toBe(204);
 
 });
- **/
