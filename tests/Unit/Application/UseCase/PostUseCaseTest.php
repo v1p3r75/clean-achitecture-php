@@ -1,11 +1,14 @@
 <?php
 
 use Application\Request\Post\CreatePostRequest;
+use Application\Request\Post\GetAllPostRequest;
 use Application\Request\Post\GetPostRequest;
 use Application\UseCase\Post\CreatePostUseCase;
+use Application\UseCase\Post\GetAllPostUseCase;
 use Application\UseCase\Post\GetPostUseCase;
 use Domain\Entity\Post;
 use Domain\Entity\User;
+use Presentation\Post\GetAllPostJsonPresenter;
 use Presentation\Post\ShowPostJsonPresenter;
 use Tests\Unit\Mock\Repository\InMemoryPostRepository;
 use Tests\Unit\Mock\Repository\InMemoryUserRepository;
@@ -142,20 +145,20 @@ it ('should return errors if post not found', function () {
 
 });
 
-/**
-it ('should return all users', closure: function () {
 
-    $fakeUser1 = new User();
-    $fakeUser1->setEmail('user1@gmail.com');
-    $fakeUser2 = new User();
-    $fakeUser2->setEmail('user2@gmail.com');
+it ('should return all posts', closure: function () {
 
-    $this->repository->save($fakeUser1);
-    $this->repository->save($fakeUser2);
+    $post1 = new Post();
+    $post1->setTitle('title');
+    $post2 = new Post();
+    $post2->setTitle('title_2');
 
-    $useCase = new GetAllUserUseCase($this->repository);
-    $request = new GetAllUserRequest();
-    $presenter = new GetAllUserJsonPresenter();
+    $this->postRepository->save($post1);
+    $this->postRepository->save($post2);
+
+    $useCase = new GetAllPostUseCase($this->postRepository);
+    $request = new GetAllPostRequest();
+    $presenter = new GetAllPostJsonPresenter();
 
     $useCase->execute($request, $presenter);
 
@@ -167,6 +170,7 @@ it ('should return all users', closure: function () {
     expect($viewModel->data)->toHaveCount(2);
 });
 
+/**
 it ('should delete a user', closure: function () {
 
     $fakeUser = new User();
