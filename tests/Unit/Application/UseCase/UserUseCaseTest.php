@@ -37,16 +37,16 @@ it('should create a new user', function () {
     $useCase->execute($request, $this->presenter);
 
     $savedUser = $this->repository->findOneByEmail($request->email);
-    expect($savedUser)->not()->toBeNull();
-    expect($savedUser->getUsername())->toBe($request->username);
+    expect($savedUser)->not()->toBeNull()
+        ->and($savedUser->getUsername())->toBe($request->username);
 
     $viewModel = $this->presenter->getViewModel();
 
-    expect($viewModel->status)->toBeTrue();
-    expect($viewModel->httpCode)->toBe(201);
-    expect($viewModel->data['email'])->toBe($request->email);
-    expect($viewModel->data['username'])->toBe($request->username);
-    expect($viewModel->data['isAdmin'])->toBeFalse();
+    expect($viewModel->status)->toBeTrue()
+        ->and($viewModel->httpCode)->toBe(201)
+        ->and($viewModel->data['email'])->toBe($request->email)
+        ->and($viewModel->data['username'])->toBe($request->username)
+        ->and($viewModel->data['isAdmin'])->toBeFalse();
 
 });
 
@@ -67,10 +67,10 @@ it('should return validation errors for invalid request (creation)', function ()
 
     $viewModel = $this->presenter->getViewModel();
 
-    expect($viewModel->status)->toBeFalse();
-    expect($viewModel->httpCode)->toBe(400);
-    expect($viewModel->errors)->not()->toBeEmpty();
-    expect($viewModel->data)->toBeEmpty();
+    expect($viewModel->status)->toBeFalse()
+        ->and($viewModel->httpCode)->toBe(400)
+        ->and($viewModel->errors)->not()->toBeEmpty()
+        ->and($viewModel->data)->toBeEmpty();
 });
 
 it ('should get user from repository', function () {
@@ -90,11 +90,11 @@ it ('should get user from repository', function () {
 
     $viewModel = $this->presenter->getViewModel();
 
-    expect($viewModel->status)->tobeTrue();
-    expect($viewModel->httpCode)->toBe(200);
-    expect($viewModel->errors)->toBeEmpty();
-    expect($viewModel->data['email'])->toBe('fake@gmail.com');
-    expect($viewModel->data['username'])->toBe('viper');
+    expect($viewModel->status)->tobeTrue()
+        ->and($viewModel->httpCode)->toBe(200)
+        ->and($viewModel->errors)->toBeEmpty()
+        ->and($viewModel->data['email'])->toBe('fake@gmail.com')
+        ->and($viewModel->data['username'])->toBe('viper');
 });
 
 it ('should return errors if user not found', function () {
@@ -107,9 +107,9 @@ it ('should return errors if user not found', function () {
 
     $viewModel = $this->presenter->getViewModel();
 
-    expect($viewModel->status)->toBeFalse();
-    expect($viewModel->httpCode)->toBe(404);
-    expect($viewModel->errors)->toBeEmpty();
+    expect($viewModel->status)->toBeFalse()
+        ->and($viewModel->httpCode)->toBe(404)
+        ->and($viewModel->errors)->toBeEmpty();
 
 });
 
@@ -131,10 +131,10 @@ it ('should return all users', closure: function () {
 
     $viewModel = $presenter->getViewModel();
 
-    expect($viewModel->status)->toBeTrue();
-    expect($viewModel->httpCode)->toBe(200);
-    expect($viewModel->errors)->toBeEmpty();
-    expect($viewModel->data)->toHaveCount(2);
+    expect($viewModel->status)->toBeTrue()
+        ->and($viewModel->httpCode)->toBe(200)
+        ->and($viewModel->errors)->toBeEmpty()
+        ->and($viewModel->data)->toHaveCount(2);
 });
 
 
@@ -155,7 +155,7 @@ it ('should delete a user', closure: function () {
 
     $viewModel = $presenter->getViewModel();
 
-    expect($viewModel->status)->toBeTrue();
-    expect($viewModel->httpCode)->toBe(204);
+    expect($viewModel->status)->toBeTrue()
+        ->and($viewModel->httpCode)->toBe(204);
 
 });

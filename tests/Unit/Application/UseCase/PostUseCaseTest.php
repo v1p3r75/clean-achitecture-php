@@ -44,14 +44,13 @@ it('should post an article', function () {
     $viewModel = $this->presenter->getViewModel();
 
     $post = $this->postRepository->find($viewModel->data['id']);
-    expect($post)->not()->toBeNull();
-    expect($post->getTitle())->toBe($request->title);
-
-    expect($viewModel->status)->toBeTrue();
-    expect($viewModel->httpCode)->toBe(201);
-    expect($viewModel->data['title'])->toBe($request->title);
-    expect($viewModel->data['content'])->toBe($request->content);
-    expect($viewModel->data['user']['id'])->toBe($request->userId);
+    expect($post)->not()->toBeNull()
+        ->and($post->getTitle())->toBe($request->title)
+        ->and($viewModel->status)->toBeTrue()
+        ->and($viewModel->httpCode)->toBe(201)
+        ->and($viewModel->data['title'])->toBe($request->title)
+        ->and($viewModel->data['content'])->toBe($request->content)
+        ->and($viewModel->data['user']['id'])->toBe($request->userId);
 
 });
 
@@ -70,10 +69,10 @@ it('should return validation errors for invalid request (creation)', function ()
 
     $viewModel = $this->presenter->getViewModel();
 
-    expect($viewModel->status)->toBeFalse();
-    expect($viewModel->httpCode)->toBe(400);
-    expect($viewModel->errors)->not()->toBeEmpty();
-    expect($viewModel->data)->toBeEmpty();
+    expect($viewModel->status)->toBeFalse()
+        ->and($viewModel->httpCode)->toBe(400)
+        ->and($viewModel->errors)->not()->toBeEmpty()
+        ->and($viewModel->data)->toBeEmpty();
 
 });
 
@@ -94,10 +93,10 @@ it('should return errors if user not found', function () {
 
     $viewModel = $this->presenter->getViewModel();
 
-    expect($viewModel->status)->toBeFalse();
-    expect($viewModel->httpCode)->toBe(404);
-    expect($viewModel->errors)->not()->toBeEmpty();
-    expect($viewModel->data)->toBeEmpty();
+    expect($viewModel->status)->toBeFalse()
+        ->and($viewModel->httpCode)->toBe(404)
+        ->and($viewModel->errors)->not()->toBeEmpty()
+        ->and($viewModel->data)->toBeEmpty();
 
 });
 
@@ -123,12 +122,12 @@ it ('should get a post from repository', function () {
 
     $viewModel = $this->presenter->getViewModel();
 
-    expect($viewModel->status)->tobeTrue();
-    expect($viewModel->httpCode)->toBe(200);
-    expect($viewModel->errors)->toBeEmpty();
-    expect($viewModel->data['title'])->toBe('title');
-    expect($viewModel->data['content'])->toBe('content');
-    expect($viewModel->data['user']['username'])->toBe('viper');
+    expect($viewModel->status)->tobeTrue()
+        ->and($viewModel->httpCode)->toBe(200)
+        ->and($viewModel->errors)->toBeEmpty()
+        ->and($viewModel->data['title'])->toBe('title')
+        ->and($viewModel->data['content'])->toBe('content')
+        ->and($viewModel->data['user']['username'])->toBe('viper');
 });
 
 
@@ -142,9 +141,9 @@ it ('should return errors if post not found', function () {
 
     $viewModel = $this->presenter->getViewModel();
 
-    expect($viewModel->status)->toBeFalse();
-    expect($viewModel->httpCode)->toBe(404);
-    expect($viewModel->errors)->toBeEmpty();
+    expect($viewModel->status)->toBeFalse()
+        ->and($viewModel->httpCode)->toBe(404)
+        ->and($viewModel->errors)->toBeEmpty();
 
 });
 
@@ -167,10 +166,10 @@ it ('should return all posts', closure: function () {
 
     $viewModel = $presenter->getViewModel();
 
-    expect($viewModel->status)->toBeTrue();
-    expect($viewModel->httpCode)->toBe(200);
-    expect($viewModel->errors)->toBeEmpty();
-    expect($viewModel->data)->toHaveCount(2);
+    expect($viewModel->status)->toBeTrue()
+        ->and($viewModel->httpCode)->toBe(200)
+        ->and($viewModel->errors)->toBeEmpty()
+        ->and($viewModel->data)->toHaveCount(2);
 });
 
 
@@ -191,7 +190,7 @@ it ('should delete a post', closure: function () {
 
     $viewModel = $presenter->getViewModel();
 
-    expect($viewModel->status)->toBeTrue();
-    expect($viewModel->httpCode)->toBe(204);
+    expect($viewModel->status)->toBeTrue()
+        ->and($viewModel->httpCode)->toBe(204);
 
 });
