@@ -1,8 +1,11 @@
 <?php
 
 use Application\Request\Comment\CreateCommentRequest;
+use Application\Request\Comment\GetCommentRequest;
 use Application\UseCase\Comment\CreateCommentUseCase;
+use Application\UseCase\Comment\GetCommentUseCase;
 use Application\Validator\Comment\CreateCommentValidator;
+use Domain\Entity\Comment;
 use Domain\Entity\Post;
 use Domain\Entity\User;
 use Presentation\Comment\ShowCommentJsonPresenter;
@@ -84,4 +87,39 @@ it('should return errors if user or post not found (creation)', function () {
         ->and($viewModel->httpCode)->toBe(404)
         ->and($viewModel->errors)->not()->toBeEmpty()
         ->and($viewModel->data)->toBeEmpty();
+});
+
+it ('should get a comment', function () {
+
+    $user = new User();
+    $user->setEmail('fake@gmail.com');
+    $user->setUsername('viper');
+
+    $post = new Post();
+    $post->setTitle('title');
+    $post->setContent('content');
+    $post->setUser($user);
+
+    $comment = new Comment();
+    $comment->setContent('content');
+    $comment->setUser($user);
+    $comment->setPost($post);
+    $this->commentRepository->save($comment);
+
+    $useCase = new GetCommentUseCase($this->commentRepository);
+
+    $request = new GetCommentRequest($comment->getId());
+
+    $useCase->execute($request, $this->presenter);
+
+    expect($this->commentRepository->find($request->id))->not()->toBeNull();
+
+    $viewModel = $this->presenter->getViewModel();
+
+    expect($viewModel->status)->tobeTrue()
+        ->and($viewModel->httpCode)->toBe(200)
+        ->and($viewModel->errors)->toBeEmpty()
+        ->and($viewModel->data['content'])->toBe('content')
+        ->and($viewModel->data['user']['username'])->toBe('viper')
+        ->and($viewModel->data['post']['title'])->toBe('title');
 });
