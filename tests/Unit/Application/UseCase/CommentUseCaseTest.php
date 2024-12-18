@@ -1,15 +1,21 @@
 <?php
 
 use Application\Request\Comment\CreateCommentRequest;
+use Application\Request\Comment\DeleteCommentRequest;
 use Application\Request\Comment\GetAllCommentRequest;
 use Application\Request\Comment\GetCommentRequest;
+use Application\Request\Comment\UpdateCommentRequest;
 use Application\UseCase\Comment\CreateCommentUseCase;
+use Application\UseCase\Comment\DeleteCommentUseCase;
 use Application\UseCase\Comment\GetAllCommentUseCase;
 use Application\UseCase\Comment\GetCommentUseCase;
+use Application\UseCase\Comment\UpdateCommentUseCase;
 use Application\Validator\Comment\CreateCommentValidator;
+use Application\Validator\Comment\UpdateCommentValidator;
 use Domain\Entity\Comment;
 use Domain\Entity\Post;
 use Domain\Entity\User;
+use Presentation\Comment\DeleteCommentJsonPresenter;
 use Presentation\Comment\GetAllCommentJsonPresenter;
 use Presentation\Comment\ShowCommentJsonPresenter;
 use Tests\Unit\Mock\Repository\InMemoryCommentRepository;
@@ -252,4 +258,65 @@ it ('should get comments by user', closure: function () {
         ->and($viewModel->httpCode)->toBe(200)
         ->and($viewModel->errors)->toBeEmpty()
         ->and($viewModel->data)->toHaveCount(2);
+});
+
+it ('should update a comment', closure: function () {
+
+    $user = new User();
+    $user->setEmail('fake@gmail.com');
+    $user->setUsername('viper');
+
+    $post = new Post();
+    $post->setTitle('title');
+    $post->setContent('content');
+    $post->setUser($user);
+
+    $comment = new Comment();
+    $comment->setContent('content');
+    $comment->setUser($user);
+    $comment->setPost($post);
+
+    $this->commentRepository->save($comment);
+
+    $useCase = new UpdateCommentUseCase(
+        $this->commentRepository,
+        new UpdateCommentValidator()
+    );
+
+    $request = new UpdateCommentRequest(
+        $comment->getId(),
+        'new_content',
+    );
+
+    $useCase->execute($request, $this->presenter);
+
+    $viewModel = $this->presenter->getViewModel();
+
+    expect($viewModel->status)->tobeTrue()
+        ->and($viewModel->httpCode)->toBe(200)
+        ->and($viewModel->errors)->toBeEmpty()
+        ->and($viewModel->data['content'])->toBe('new_content');
+});
+
+it('should delete a comment', function () {
+
+    $comment = new Comment();
+    $comment->setContent('content');
+    $comment->setUser(new User());
+    $comment->setPost(new Post());
+
+    $this->commentRepository->save($comment);
+
+    $useCase = new DeleteCommentUseCase($this->commentRepository);
+    $request = new DeleteCommentRequest($comment->getId());
+    $presenter = new DeleteCommentJsonPresenter();
+
+    $useCase->execute($request, $presenter);
+
+    expect($this->postRepository->find($request->id))->toBeNull();
+
+    $viewModel = $presenter->getViewModel();
+
+    expect($viewModel->status)->toBeTrue()
+        ->and($viewModel->httpCode)->toBe(204);
 });
