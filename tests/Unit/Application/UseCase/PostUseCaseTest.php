@@ -244,3 +244,43 @@ it ('should delete a post', closure: function () {
         ->and($viewModel->httpCode)->toBe(204);
 
 });
+
+it ('should get posts by user', closure: function () {
+
+    $user = new User();
+    $user->setEmail('fake@gmail.com');
+    $user->setUsername('viper');
+
+    $user2 = new User();
+    $user2->setEmail('fake@gmail.com');
+    $user2->setUsername('viper');
+
+    $post1 = new Post();
+    $post1->setTitle('title');
+    $post1->setUser($user);
+
+    $post2 = new Post();
+    $post2->setTitle('title_2');
+    $post2->setUser($user);
+
+    $post3 = new Post();
+    $post3->setTitle('title_3');
+    $post3->setUser($user2);
+
+    $this->postRepository->save($post1);
+    $this->postRepository->save($post2);
+    $this->postRepository->save($post3);
+
+    $useCase = new GetAllPostUseCase($this->postRepository);
+    $request = new GetAllPostRequest($user->getId());
+    $presenter = new GetAllPostJsonPresenter();
+
+    $useCase->execute($request, $presenter);
+
+    $viewModel = $presenter->getViewModel();
+
+    expect($viewModel->status)->toBeTrue()
+        ->and($viewModel->httpCode)->toBe(200)
+        ->and($viewModel->errors)->toBeEmpty()
+        ->and($viewModel->data)->toHaveCount(2);
+});

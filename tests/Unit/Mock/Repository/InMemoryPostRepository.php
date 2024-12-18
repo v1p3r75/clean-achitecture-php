@@ -32,4 +32,10 @@ class InMemoryPostRepository implements PostRepositoryInterface
             $this->data = array_filter($this->data, fn(Post $post) => $post->getId() !== $id);
         }
     }
+
+
+    public function getByUser(string $userId): array
+    {
+        return array_filter($this->data, fn(Post $post) => $post->getUser()->getId() === $userId);
+    }
 }

@@ -19,7 +19,11 @@ readonly class GetAllPostUseCase
         GetAllPostPresenterInterface $presenter
     ): void {
 
-        $posts = $this->postRepository->findAll();
+        if ($request->userId) {
+             $posts = $this->postRepository->getByUser($request->userId);
+        } else {
+            $posts = $this->postRepository->findAll();
+        }
 
         $response = new GetAllPostResponse();
 

@@ -10,7 +10,16 @@ interface PostRepositoryInterface
 
     public function find(string $id): ?Post;
 
+    /**
+     * @return Post[]
+     */
     public function findAll(): array;
+
+    /**
+     * @param string $userId
+     * @return Post[]
+     */
+    public function getByUser(string $userId): array;
 
     public function delete(string $id): void;
 
