@@ -5,11 +5,14 @@ use Application\Request\User\CreateUserRequest;
 use Application\Request\User\DeleteUserRequest;
 use Application\Request\User\GetAllUserRequest;
 use Application\Request\User\GetUserRequest;
+use Application\Request\User\UpdateUserRequest;
 use Application\UseCase\User\CreateUserUseCase;
 use Application\UseCase\User\DeleteUserUseCase;
 use Application\UseCase\User\GetAllUserUseCase;
 use Application\UseCase\User\GetUserUseCase;
+use Application\UseCase\User\UpdateUserUseCase;
 use Application\Validator\User\CreateUserValidator;
+use Application\Validator\User\UpdateUserValidator;
 use Domain\Entity\User;
 use Presentation\User\DeleteUserJsonPresenter;
 use Presentation\User\GetAllUserJsonPresenter;
@@ -146,6 +149,37 @@ it ('should return all users', closure: function () {
         ->and($viewModel->data)->toHaveCount(2);
 });
 
+it ('should update a user', closure: function () {
+
+
+    $user = new User();
+    $user->setEmail('fake@gmail.com');
+    $user->setUsername('viper');
+    $user->setPassword('password');
+
+    $this->repository->save($user);
+
+    $useCase = new UpdateUserUseCase(
+        $this->repository,
+        $this->hasher,
+        new UpdateUserValidator()
+    );
+
+    $request = new UpdateUserRequest(
+        $user->getId(),
+        'new_username',
+    );
+
+    $useCase->execute($request, $this->presenter);
+
+    $viewModel = $this->presenter->getViewModel();
+
+    expect($viewModel->status)->tobeTrue()
+        ->and($viewModel->httpCode)->toBe(200)
+        ->and($viewModel->errors)->toBeEmpty()
+        ->and($viewModel->data['email'])->toBe('fake@gmail.com')
+        ->and($viewModel->data['username'])->toBe('new_username');
+});
 
 it ('should delete a user', closure: function () {
 
