@@ -4,11 +4,14 @@ use Application\Request\Post\CreatePostRequest;
 use Application\Request\Post\DeletePostRequest;
 use Application\Request\Post\GetAllPostRequest;
 use Application\Request\Post\GetPostRequest;
+use Application\Request\Post\UpdatePostRequest;
 use Application\UseCase\Post\CreatePostUseCase;
 use Application\UseCase\Post\DeletePostUseCase;
 use Application\UseCase\Post\GetAllPostUseCase;
 use Application\UseCase\Post\GetPostUseCase;
+use Application\UseCase\Post\UpdatePostUseCase;
 use Application\Validator\Post\CreatePostValidator;
+use Application\Validator\Post\UpdatePostValidator;
 use Domain\Entity\Post;
 use Domain\Entity\User;
 use Presentation\Post\DeletePostJsonPresenter;
@@ -185,6 +188,40 @@ it ('should return all posts', closure: function () {
         ->and($viewModel->data)->toHaveCount(2);
 });
 
+it ('should update a post', closure: function () {
+
+    $user = new User();
+    $user->setEmail('fake@gmail.com');
+    $user->setUsername('viper');
+    $user->setPassword('password');
+
+    $post = new Post();
+    $post->setTitle('title');
+    $post->setContent('content');
+    $post->setUser($user);
+
+    $this->postRepository->save($post);
+
+    $useCase = new UpdatePostUseCase(
+        $this->postRepository,
+        new UpdatePostValidator()
+    );
+
+    $request = new UpdatePostRequest(
+        $post->getId(),
+        'new_title',
+    );
+
+    $useCase->execute($request, $this->presenter);
+
+    $viewModel = $this->presenter->getViewModel();
+
+    expect($viewModel->status)->tobeTrue()
+        ->and($viewModel->httpCode)->toBe(200)
+        ->and($viewModel->errors)->toBeEmpty()
+        ->and($viewModel->data['title'])->toBe('new_title')
+        ->and($viewModel->data['content'])->toBe('content');
+});
 
 it ('should delete a post', closure: function () {
 
