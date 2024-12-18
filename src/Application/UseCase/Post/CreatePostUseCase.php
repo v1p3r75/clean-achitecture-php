@@ -6,6 +6,7 @@ use Application\Presenter\ShowPostPresenterInterface;
 use Application\Request\Post\CreatePostRequest;
 use Application\Response\PostResponse;
 use Application\Service\HttpCode;
+use Application\Validator\Post\CreatePostValidator;
 use Assert\Assert;
 use Assert\LazyAssertionException;
 use DateTimeImmutable;
@@ -18,7 +19,8 @@ readonly class CreatePostUseCase
 
     public function __construct(
         private PostRepositoryInterface $postRepository,
-        private UserRepositoryInterface $userRepository
+        private UserRepositoryInterface $userRepository,
+        private CreatePostValidator $validator
     ) {}
 
     public function execute(CreatePostRequest $request, ShowPostPresenterInterface $presenter): void
@@ -26,10 +28,11 @@ readonly class CreatePostUseCase
 
         $response = new PostResponse();
 
-        if (!$this->isValidRequest($request, $response)) {
+        if (!$this->validator->validate($request)) {
 
             $response->setStatus(false);
             $response->setHttpCode(HttpCode::HTTP_BAD_REQUEST);
+            $response->setErrors($this->validator->getErrors());
             $presenter->present($response);
             return;
         }
@@ -59,26 +62,4 @@ readonly class CreatePostUseCase
         $presenter->present($response);
     }
 
-    private function isValidRequest(CreatePostRequest $request, PostResponse $response): bool
-    {
-        try {
-
-            Assert::lazy()
-                ->that($request->title, 'title')->string()->minLength(4)
-                ->that($request->content, 'content')->string()->minLength(10)
-                ->that($request->userId, 'userId')->string()
-                ->verifyNow();
-
-            return true;
-
-        } catch (LazyAssertionException $e) {
-
-            $errors = $e->getErrorExceptions();
-            foreach ($errors as $error) {
-                $response->addError($error->getPropertyPath(), $error->getMessage());
-            }
-            return false;
-        }
-
-    }
 }

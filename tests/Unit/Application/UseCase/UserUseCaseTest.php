@@ -9,6 +9,7 @@ use Application\UseCase\User\CreateUserUseCase;
 use Application\UseCase\User\DeleteUserUseCase;
 use Application\UseCase\User\GetAllUserUseCase;
 use Application\UseCase\User\GetUserUseCase;
+use Application\Validator\User\CreateUserValidator;
 use Domain\Entity\User;
 use Presentation\User\DeleteUserJsonPresenter;
 use Presentation\User\GetAllUserJsonPresenter;
@@ -26,7 +27,11 @@ beforeEach(function () {
 
 it('should create a new user', function () {
 
-    $useCase = new CreateUserUseCase($this->repository, $this->hasher);
+    $useCase = new CreateUserUseCase(
+        $this->repository,
+        $this->hasher,
+        new CreateUserValidator()
+    );
 
     $request = new CreateUserRequest(
         'viper75',
@@ -52,7 +57,11 @@ it('should create a new user', function () {
 
 it('should return validation errors for invalid request (creation)', function () {
 
-    $useCase = new CreateUserUseCase($this->repository, $this->hasher);
+    $useCase = new CreateUserUseCase(
+        $this->repository,
+        $this->hasher,
+        new CreateUserValidator()
+    );
 
     $request = new CreateUserRequest(
         'min',

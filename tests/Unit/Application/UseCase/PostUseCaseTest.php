@@ -8,6 +8,7 @@ use Application\UseCase\Post\CreatePostUseCase;
 use Application\UseCase\Post\DeletePostUseCase;
 use Application\UseCase\Post\GetAllPostUseCase;
 use Application\UseCase\Post\GetPostUseCase;
+use Application\Validator\Post\CreatePostValidator;
 use Domain\Entity\Post;
 use Domain\Entity\User;
 use Presentation\Post\DeletePostJsonPresenter;
@@ -31,7 +32,11 @@ it('should post an article', function () {
     $fakeUser->setEmail('viper@gmail.com');
     $this->userRepository->save($fakeUser);
 
-    $useCase = new CreatePostUseCase($this->postRepository, $this->userRepository);
+    $useCase = new CreatePostUseCase(
+        $this->postRepository,
+        $this->userRepository,
+        new CreatePostValidator()
+    );
 
     $request = new CreatePostRequest(
         'Clean Architecture',
@@ -57,7 +62,11 @@ it('should post an article', function () {
 
 it('should return validation errors for invalid request (creation)', function () {
 
-    $useCase = new CreatePostUseCase($this->postRepository, $this->userRepository);
+    $useCase = new CreatePostUseCase(
+        $this->postRepository,
+        $this->userRepository,
+        new CreatePostValidator()
+    );
 
     $request = new CreatePostRequest(
         'title',
@@ -78,7 +87,11 @@ it('should return validation errors for invalid request (creation)', function ()
 
 it('should return errors if user not found', function () {
 
-    $useCase = new CreatePostUseCase($this->postRepository, $this->userRepository);
+    $useCase = new CreatePostUseCase(
+        $this->postRepository,
+        $this->userRepository,
+        new CreatePostValidator()
+    );
 
     $request = new CreatePostRequest(
         'title',

@@ -38,6 +38,11 @@ class BaseResponse
         return $this->errors;
     }
 
+    public function setErrors(array $errors): void
+    {
+        $this->errors = $errors;
+    }
+
     public function addError(string $field, string|array $message): void
     {
         $this->errors[$field] = $message;

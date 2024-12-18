@@ -3,12 +3,11 @@
 namespace Application\UseCase\User;
 
 use Application\Contract\PasswordHasherInterface;
+use Application\Contract\ValidatorInterface;
 use Application\Presenter\ShowUserPresenterInterface;
 use Application\Request\User\CreateUserRequest;
 use Application\Response\UserResponse;
 use Application\Service\HttpCode;
-use Assert\Assert;
-use Assert\LazyAssertionException;
 use DateTimeImmutable;
 use Domain\Entity\User;
 use Domain\Repository\UserRepositoryInterface;
@@ -17,7 +16,8 @@ readonly class CreateUserUseCase
 {
     public function __construct(
         private UserRepositoryInterface $userRepositoryInterface,
-        private PasswordHasherInterface $passwordHasher
+        private PasswordHasherInterface $passwordHasher,
+        private ValidatorInterface $validator
     ) {}
 
     public function execute(
@@ -28,10 +28,11 @@ readonly class CreateUserUseCase
 
         $response = new UserResponse();
 
-        if (!$this->isValidRequest($request, $response)) {
+        if (!$this->validator->validate($request)) {
 
             $response->setStatus(false);
             $response->setHttpCode(HttpCode::HTTP_BAD_REQUEST);
+            $response->setErrors($this->validator->getErrors());
             $presenter->present($response);
             return;
         }
@@ -48,29 +49,6 @@ readonly class CreateUserUseCase
         $response->setUser($user);
 
         $presenter->present($response);
-    }
-
-    private function isValidRequest(CreateUserRequest $request, UserResponse $response): bool
-    {
-        try {
-
-            Assert::lazy()
-                ->that($request->email, 'email')->email()
-                ->that($request->username, 'username')->minLength(4)
-                ->that($request->password, 'password')->minLength(8)
-                ->verifyNow();
-
-            return true;
-
-        } catch (LazyAssertionException $e) {
-
-            $errors = $e->getErrorExceptions();
-            foreach ($errors as $error) {
-                $response->addError($error->getPropertyPath(), $error->getMessage());
-            }
-            return false;
-        }
-
     }
 
 }
