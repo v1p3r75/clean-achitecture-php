@@ -39,7 +39,10 @@ class InMemoryUserRepository implements UserRepositoryInterface
     {
 
         if (isset($this->users[$id])) {
-            $this->users = array_filter($this->users, fn(User $user) => $user->getId() !== $id);
+            $this->users = array_filter(
+                $this->users,
+                fn(User $user) => $user->getId() !== $id
+            );
         }
     }
 }

@@ -36,4 +36,19 @@ class InMemoryCommentRepository implements CommentRepositoryInterface
         }
     }
 
+    public function findByUser(string $userId): array
+    {
+        return array_filter(
+            $this->data,
+            fn(Comment $comment) => $comment->getUser()->getId() === $userId
+        );
+    }
+
+    public function findByPost(string $postId): array
+    {
+        return array_filter(
+            $this->data,
+            fn(Comment $comment) => $comment->getPost()->getId() === $postId
+        );
+    }
 }

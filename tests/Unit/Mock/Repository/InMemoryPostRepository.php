@@ -29,13 +29,19 @@ class InMemoryPostRepository implements PostRepositoryInterface
     {
 
         if (isset($this->data[$id])) {
-            $this->data = array_filter($this->data, fn(Post $post) => $post->getId() !== $id);
+            $this->data = array_filter(
+                $this->data,
+                fn(Post $post) => $post->getId() !== $id
+            );
         }
     }
 
 
     public function getByUser(string $userId): array
     {
-        return array_filter($this->data, fn(Post $post) => $post->getUser()->getId() === $userId);
+        return array_filter(
+            $this->data,
+            fn(Post $post) => $post->getUser()->getId() === $userId
+        );
     }
 }

@@ -15,6 +15,16 @@ interface CommentRepositoryInterface
      */
     public function findAll(): array;
 
+    /**
+     * @return Comment[]
+     */
+    public function findByUser(string $userId): array;
+
+    /**
+     * @return Comment[]
+     */
+    public function findByPost(string $postId): array;
+
     public function delete(string $id): void;
 
 }
