@@ -6,12 +6,14 @@ use Application\Presenter\ShowPostPresenterInterface;
 use Application\Request\Post\GetPostRequest;
 use Application\Response\PostResponse;
 use Application\Service\HttpCode;
+use Domain\Repository\CommentRepositoryInterface;
 use Domain\Repository\PostRepositoryInterface;
 
 readonly class GetPostUseCase
 {
     public function __construct(
-        private PostRepositoryInterface $postRepository
+        private PostRepositoryInterface $postRepository,
+        private CommentRepositoryInterface $commentRepository
     ){}
 
     public function execute(
@@ -30,6 +32,9 @@ readonly class GetPostUseCase
             $presenter->present($response);
             return;
         }
+
+        $comments = $this->commentRepository->findByPost($post->getId());
+        $post->setComments($comments);
 
         $response->setHttpCode(HttpCode::HTTP_OK);
         $response->setPost($post);

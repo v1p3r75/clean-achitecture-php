@@ -14,6 +14,12 @@ class Post
 
     private string $content;
 
+    /**
+     * @var Comment[]
+     */
+    private array $comments = [];
+
+
     private ?DateTimeImmutable $publishedAt = null;
 
     private User $user;
@@ -92,6 +98,16 @@ class Post
     public function setPublishedAt(?DateTimeImmutable $publishedAt): void
     {
         $this->publishedAt = $publishedAt;
+    }
+
+    public function getComments(): array
+    {
+        return $this->comments;
+    }
+
+    public function setComments(array $comments): void
+    {
+        $this->comments = $comments;
     }
 
 }

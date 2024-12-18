@@ -18,7 +18,9 @@ class ShowPostJsonPresenter implements ShowPostPresenterInterface
         $this->viewModel->httpCode = $response->getHttpCode();
         $this->viewModel->message = $response->getMessage();
         $this->viewModel->errors = $response->getErrors();
+
         if ($post = $response->getPost()) {
+
             $this->viewModel->data = [
                 'id' => $post->getId(),
                 'title' => $post->getTitle(),
@@ -28,6 +30,7 @@ class ShowPostJsonPresenter implements ShowPostPresenterInterface
                     'username' => $post->getUser()->getUsername()
                 ],
                 'createdAt' => $post->getPublishedAt()?->format("Y-m-d"),
+                'comments' => $post->getComments()
             ];
         }
     }

@@ -12,11 +12,13 @@ use Application\UseCase\Post\GetPostUseCase;
 use Application\UseCase\Post\UpdatePostUseCase;
 use Application\Validator\Post\CreatePostValidator;
 use Application\Validator\Post\UpdatePostValidator;
+use Domain\Entity\Comment;
 use Domain\Entity\Post;
 use Domain\Entity\User;
 use Presentation\Post\DeletePostJsonPresenter;
 use Presentation\Post\GetAllPostJsonPresenter;
 use Presentation\Post\ShowPostJsonPresenter;
+use Tests\Unit\Mock\Repository\InMemoryCommentRepository;
 use Tests\Unit\Mock\Repository\InMemoryPostRepository;
 use Tests\Unit\Mock\Repository\InMemoryUserRepository;
 
@@ -24,6 +26,7 @@ beforeEach(function () {
 
     $this->userRepository = new InMemoryUserRepository();
     $this->postRepository = new InMemoryPostRepository();
+    $this->commentRepository = new InMemoryCommentRepository();
     $this->presenter = new ShowPostJsonPresenter();
 
 });
@@ -128,9 +131,15 @@ it ('should get a post from repository', function () {
     $post->setContent('content');
     $post->setUser($fakeUser);
 
-    $this->postRepository->save($post);
+    $comment = new Comment();
+    $comment->setContent('Looks great');
+    $comment->setUser($fakeUser);
+    $comment->setPost($post);
 
-    $useCase = new GetPostUseCase($this->postRepository);
+    $this->postRepository->save($post);
+    $this->commentRepository->save($comment);
+
+    $useCase = new GetPostUseCase($this->postRepository, $this->commentRepository);
 
     $request = new GetPostRequest($post->getId());
 
@@ -143,13 +152,14 @@ it ('should get a post from repository', function () {
         ->and($viewModel->errors)->toBeEmpty()
         ->and($viewModel->data['title'])->toBe('title')
         ->and($viewModel->data['content'])->toBe('content')
-        ->and($viewModel->data['user']['username'])->toBe('viper');
+        ->and($viewModel->data['user']['username'])->toBe('viper')
+        ->and($viewModel->data['comments'])->toHaveCount(1);
 });
 
 
 it ('should return errors if post not found', function () {
 
-    $useCase = new GetPostUseCase($this->postRepository);
+    $useCase = new GetPostUseCase($this->postRepository, $this->commentRepository);
 
     $request = new GetPostRequest('unknown-post');
 
