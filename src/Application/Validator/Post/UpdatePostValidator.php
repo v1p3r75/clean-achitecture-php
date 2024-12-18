@@ -2,6 +2,7 @@
 
 namespace Application\Validator\Post;
 
+use Application\Request\Post\UpdatePostRequest;
 use Application\Validator\BaseValidator;
 use Assert\Assert;
 use Assert\LazyAssertionException;
@@ -9,6 +10,10 @@ use Assert\LazyAssertionException;
 class UpdatePostValidator extends BaseValidator
 {
 
+    /**
+     * @param UpdatePostRequest $request
+     * @return bool
+     */
     public function validate($request): bool
     {
         try {

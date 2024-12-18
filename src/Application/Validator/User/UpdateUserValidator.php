@@ -2,6 +2,7 @@
 
 namespace Application\Validator\User;
 
+use Application\Request\User\UpdateUserRequest;
 use Application\Validator\BaseValidator;
 use Assert\Assert;
 use Assert\LazyAssertionException;
@@ -10,6 +11,10 @@ class UpdateUserValidator extends BaseValidator
 {
 
 
+    /**
+     * @param UpdateUserRequest $request
+     * @return bool
+     */
     public function validate($request): bool
     {
         try {

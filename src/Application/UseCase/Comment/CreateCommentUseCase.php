@@ -1,30 +1,32 @@
 <?php
 
-namespace Application\UseCase\Post;
+namespace Application\UseCase\Comment;
 
 use Application\Contract\ValidatorInterface;
-use Application\Presenter\ShowPostPresenterInterface;
-use Application\Request\Post\CreatePostRequest;
-use Application\Response\PostResponse;
+use Application\Presenter\ShowCommentPresenterInterface;
+use Application\Request\Comment\CreateCommentRequest;
+use Application\Response\CommentResponse;
 use Application\Service\HttpCode;
 use DateTimeImmutable;
-use Domain\Entity\Post;
+use Domain\Entity\Comment;
+use Domain\Repository\CommentRepositoryInterface;
 use Domain\Repository\PostRepositoryInterface;
 use Domain\Repository\UserRepositoryInterface;
 
-readonly class CreatePostUseCase
+readonly class CreateCommentUseCase
 {
 
     public function __construct(
+        private CommentRepositoryInterface $commentRepository,
         private PostRepositoryInterface $postRepository,
         private UserRepositoryInterface $userRepository,
         private ValidatorInterface $validator
     ) {}
 
-    public function execute(CreatePostRequest $request, ShowPostPresenterInterface $presenter): void
+    public function execute(CreateCommentRequest $request, ShowCommentPresenterInterface $presenter): void
     {
 
-        $response = new PostResponse();
+        $response = new CommentResponse();
 
         if (!$this->validator->validate($request)) {
 
@@ -36,26 +38,30 @@ readonly class CreatePostUseCase
         }
 
         $user = $this->userRepository->find($request->userId);
+        $post = $this->postRepository->find($request->postId);
 
-        if (!$user) {
+        if (!$user || !$post) {
             $response->setStatus(false);
             $response->setHttpCode(HttpCode::HTTP_NOT_FOUND);
             $response->setMessage('Not found');
-            $response->addError('user', 'user not found');
+            !$user ?
+                $response->addError('user', 'user not found') :
+                $response->addError('post', 'post not found');
+
             $presenter->present($response);
             return;
         }
 
-        $post = new Post();
-        $post->setTitle($request->title);
-        $post->setContent($request->content);
-        $post->setUser($user);
-        $user->setCreatedAt(new DateTimeImmutable());
+        $comment = new Comment();
+        $comment->setContent($request->content);
+        $comment->setUser($user);
+        $comment->setPost($post);
+        $comment->setCreatedAt(new DateTimeImmutable());
 
-        $this->postRepository->save($post);
+        $this->commentRepository->save($comment);
 
         $response->setHttpCode(HttpCode::HTTP_CREATED);
-        $response->setPost($post);
+        $response->setComment($comment);
 
         $presenter->present($response);
     }

@@ -1,17 +1,16 @@
 <?php
 
-namespace Application\Validator\Post;
+namespace Application\Validator\Comment;
 
-use Application\Request\Post\CreatePostRequest;
+use Application\Request\Comment\CreateCommentRequest;
 use Application\Validator\BaseValidator;
 use Assert\Assert;
 use Assert\LazyAssertionException;
 
-class CreatePostValidator extends BaseValidator
+class CreateCommentValidator extends BaseValidator
 {
-
     /**
-     * @param CreatePostRequest $request
+     * @param CreateCommentRequest $request
      * @return bool
      */
     public function validate($request): bool
@@ -19,9 +18,9 @@ class CreatePostValidator extends BaseValidator
         try {
 
             Assert::lazy()
-                ->that($request->title, 'title')->string()->minLength(4)
-                ->that($request->content, 'content')->string()->minLength(10)
+                ->that($request->content, 'content')->string()
                 ->that($request->userId, 'userId')->string()
+                ->that($request->postId, 'postId')->string()
                 ->verifyNow();
 
             return true;

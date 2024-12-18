@@ -2,6 +2,7 @@
 
 namespace Application\Validator\User;
 
+use Application\Request\User\CreateUserRequest;
 use Application\Validator\BaseValidator;
 use Assert\Assert;
 use Assert\LazyAssertionException;
@@ -9,6 +10,10 @@ use Assert\LazyAssertionException;
 class CreateUserValidator extends BaseValidator
 {
 
+    /**
+     * @param CreateUserRequest $request
+     * @return bool
+     */
     public function validate($request): bool
     {
         try {
